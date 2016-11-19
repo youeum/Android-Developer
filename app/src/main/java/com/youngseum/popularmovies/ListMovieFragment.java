@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -27,6 +30,7 @@ import java.net.URL;
 public class ListMovieFragment extends Fragment {
 
     private final String ListMovie_tag = ListMovieFragment.class.getSimpleName();
+    private MoviePosterAdapter mMovieAdapter;
 
     public ListMovieFragment() {
     }
@@ -34,7 +38,18 @@ public class ListMovieFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+
+        // The arrayAdapter will take data from the database and
+        // use it to populate the GridView it's attached to.
+        mMovieAdapter = new MoviePosterAdapter(getActivity(), new ArrayList<MovieDetail>());
+
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        // Get a reference to the GridView, and attach this adapter to it.
+        GridView gridView = (GridView) rootView.findViewById(R.id.movie_grid);
+        gridView.setAdapter(mMovieAdapter);
+
+        return rootView;
     }
 
     @Override
@@ -78,14 +93,14 @@ public class ListMovieFragment extends Fragment {
             for (int i = 0; i < numMovies; i++) {
                 JSONObject movieObject = movieArray.getJSONObject(i);
 
-                movieDetails[i] = new MovieDetail(
-                        movieObject.getString(DB_TITLE),
-                        movieObject.getString(DB_POSTER),
-                        movieObject.getString(DB_OVERVIEW),
-                        movieObject.getString(DB_RELEASE),
-                        movieObject.getString(DB_VOTE),
-                        movieObject.getString(DB_POPULARITY)
-                );
+                movieDetails[i] =
+                        new MovieDetail(
+                            movieObject.getString(DB_TITLE),
+                            movieObject.getString(DB_POSTER),
+                            movieObject.getString(DB_OVERVIEW),
+                            movieObject.getString(DB_RELEASE),
+                            movieObject.getString(DB_VOTE),
+                            movieObject.getString(DB_POPULARITY));
             }
 
             return movieDetails;
@@ -137,6 +152,7 @@ public class ListMovieFragment extends Fragment {
                     return null;
                 }
                 movieJasonStr = buffer.toString();
+                Log.v(FetchMovie_tag, movieJasonStr);
 
             } catch (IOException e) {
                 Log.e(FetchMovie_tag, e.getMessage(), e);
@@ -166,7 +182,12 @@ public class ListMovieFragment extends Fragment {
 
         @Override
         protected void onPostExecute(MovieDetail[] movieDetails) {
-            super.onPostExecute(movieDetails);
+            if (movieDetails != null) {
+                mMovieAdapter.clear();
+                for (MovieDetail detail : movieDetails) {
+                    mMovieAdapter.add(detail);
+                }
+            }
         }
     }
 }

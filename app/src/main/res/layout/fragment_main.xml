@@ -25,19 +25,17 @@
             android:layout_height="32dp"
             android:entries="@array/sortBy_arrays"
             />
-
     </LinearLayout>
 
-    <GridLayout
-        android:id="@+id/gridview"
+    <GridView
+        android:id="@+id/movie_grid"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:columnWidth="150dp"
         android:numColumns="auto_fit"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
-        android:gravity="center"
-        >
+        android:verticalSpacing="0dp"
+        android:horizontalSpacing="0dp"
+        android:stretchMode="columnWidth">
+    </GridView>
 
-    </GridLayout>
 </LinearLayout>
