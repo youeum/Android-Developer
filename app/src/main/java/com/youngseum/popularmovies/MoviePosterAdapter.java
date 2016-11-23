@@ -37,12 +37,16 @@ public class MoviePosterAdapter extends ArrayAdapter<MovieDetail>  {
     public View getView(int position, View convertView, ViewGroup parent) {
         MovieDetail mMovieDetail = getItem(position);
 
+        // Construct the image url from the poster path.
+        String imgURL = "http://image.tmdb.org/t/p/w185" + mMovieDetail.poster;
+
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.poster_item, parent, false);
         }
 
+        // Get the reference of the image view and load the image using Picasso
         ImageView posterView = (ImageView) convertView.findViewById(R.id.poster_image);
-        Picasso.with(getContext()).load(mMovieDetail.poster).into(posterView);
+        Picasso.with(getContext()).load(imgURL).into(posterView);
 
         TextView titleView = (TextView) convertView.findViewById(R.id.poster_title);
         titleView.setText(mMovieDetail.title);
