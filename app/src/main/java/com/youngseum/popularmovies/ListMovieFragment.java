@@ -1,5 +1,6 @@
 package com.youngseum.popularmovies;
 
+import android.content.Intent;
 import android.graphics.Movie;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
@@ -48,6 +50,15 @@ public class ListMovieFragment extends Fragment {
         // Get a reference to the GridView, and attach this adapter to it.
         GridView gridView = (GridView) rootView.findViewById(R.id.movie_grid);
         gridView.setAdapter(mMovieAdapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MovieDetail detail = mMovieAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_INTENT, detail);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
