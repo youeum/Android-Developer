@@ -48,7 +48,7 @@ public class MovieDetail implements Parcelable{
         parcel.writeString(popularity);
     }
 
-    public final Parcelable.Creator<MovieDetail> CREATOR = new Parcelable.Creator<MovieDetail>() {
+    public static final Parcelable.Creator<MovieDetail> CREATOR = new Parcelable.Creator<MovieDetail>() {
         @Override
         public MovieDetail createFromParcel(Parcel source) {
             return new MovieDetail(source);

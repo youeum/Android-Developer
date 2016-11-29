@@ -1,9 +1,13 @@
 package com.youngseum.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Movie;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,20 +37,47 @@ import java.util.ArrayList;
  */
 public class ListMovieFragment extends Fragment {
 
-    private final String ListMovie_tag = ListMovieFragment.class.getSimpleName();
     private MoviePosterAdapter mMovieAdapter;
+    private ArrayList<MovieDetail> movieList;
+
+    // Use this to keep onItemSelected from firing when the view is being created
+    private int lastSpinnerPos;
 
     public ListMovieFragment() {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("movies", movieList);
+        outState.putInt("lastSpinnerPos", lastSpinnerPos);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
+            movieList = new ArrayList<>();
+            lastSpinnerPos = 0;
+        }
+        else {
+            movieList = savedInstanceState.getParcelableArrayList("movies");
+            lastSpinnerPos = savedInstanceState.getInt("lastSpinnerPos");
+        }
 
         // The arrayAdapter will take data from the database and
         // use it to populate the GridView it's attached to.
-        mMovieAdapter = new MoviePosterAdapter(getActivity(), new ArrayList<MovieDetail>());
+        mMovieAdapter = new MoviePosterAdapter(getActivity(), movieList);
 
+        // If no saved data, query the database using popularity as the sort order
+        if (savedInstanceState == null)
+            queryPopularMovies("Popularlity");
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Get a reference to the GridView, and attach this adapter to it.
@@ -60,18 +93,50 @@ public class ListMovieFragment extends Fragment {
             }
         });
 
+        // Add a listener to the spinner and sort according to the setting chosen
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.sortBySpinner);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                // If the user did not click a different item, don't query the database
+                if (lastSpinnerPos == i)
+                    return;
+
+                lastSpinnerPos = i;
+
+                String selected = adapterView.getItemAtPosition(i).toString();
+                if (selected.equals("Popularity")) {
+                    queryPopularMovies("Popularity");
+                }
+                else if (selected.equals("Rating")) {
+                    queryPopularMovies("Rating");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                return;
+            }
+        });
+
         return rootView;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        queryPopularMovies();
-    }
+    private void queryPopularMovies(String setting) {
+        // Check for the network status
+        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = cm.getActiveNetworkInfo();
 
-    private void queryPopularMovies() {
+        // If no network available, don't query
+        if (activeNetworkInfo == null || !activeNetworkInfo.isConnected())
+        {
+            Toast.makeText(getContext(), "No Network Connection", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         FetchMovieTask movieTask = new FetchMovieTask();
-        movieTask.execute();
+        movieTask.execute(setting);
     }
 
     public class FetchMovieTask extends AsyncTask<String, Void, MovieDetail[]> {
@@ -125,7 +190,9 @@ public class ListMovieFragment extends Fragment {
             String movieJasonStr = null;
 
             try {
+
                 // Construct the URL for the movide database query
+                // In default, it will query the movies according to the popularity
                 String BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
                 String API_PARAM = "api_key";
 
@@ -137,8 +204,6 @@ public class ListMovieFragment extends Fragment {
                         .appendQueryParameter(API_PARAM, BuildConfig.MY_API_KEY)
                         .build();
 
-                Log.v(FetchMovie_tag, "API: "+BuildConfig.MY_API_KEY);
-                Log.v(FetchMovie_tag, "URI: "+builtUri);
                 URL url = new URL(builtUri.toString());
 
                 // Create the connection.
@@ -163,7 +228,6 @@ public class ListMovieFragment extends Fragment {
                     return null;
                 }
                 movieJasonStr = buffer.toString();
-                Log.v(FetchMovie_tag, movieJasonStr);
 
             } catch (IOException e) {
                 Log.e(FetchMovie_tag, e.getMessage(), e);
