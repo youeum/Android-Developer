@@ -3,4 +3,29 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="activity_small_margin">16dp</dimen>
+    <dimen name="activity_large_margin">32dp</dimen>
+
+    <!-- Dimension for the GridView displaying movie posters -->
+    <dimen name="gridView_size">200dp</dimen>
+    <dimen name="gridView_columnWidth">150dp</dimen>
+    <dimen name="girdView_spacing">5dp</dimen>
+
+    <!-- Dimension for the spinner -->
+    <dimen name="spinner_height">32dp</dimen>
+    <dimen name="spinner_width">160dp</dimen>
+
+    <!-- Dimensions for the TextView displaying the movie title -->
+    <dimen name="fontSize_title">26sp</dimen>
+    <dimen name="title_height">100dp</dimen>
+
+    <!-- Dimensions for the ImageView displaying the poster image -->
+    <dimen name="detail_image_height">150dp</dimen>
+    <dimen name="detail_image_width">100dp</dimen>
+
+    <dimen name="fontSize_normal">16sp</dimen>
+
+
+
 </resources>

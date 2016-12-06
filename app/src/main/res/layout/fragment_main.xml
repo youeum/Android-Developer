@@ -18,12 +18,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Sort by:" />
+            android:text="@string/spinner_text"/>
         
         <Spinner
             android:id="@+id/sortBySpinner"
-            android:layout_width="160dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/spinner_width"
+            android:layout_height="@dimen/spinner_height"
             android:entries="@array/sortBy_arrays"
             />
     </LinearLayout>
@@ -32,10 +32,10 @@
         android:id="@+id/movie_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="150dp"
+        android:columnWidth="@dimen/gridView_columnWidth"
         android:numColumns="auto_fit"
-        android:verticalSpacing="5dp"
-        android:horizontalSpacing="5dp"
+        android:verticalSpacing="@dimen/girdView_spacing"
+        android:horizontalSpacing="@dimen/girdView_spacing"
         android:stretchMode="columnWidth">
     </GridView>
 

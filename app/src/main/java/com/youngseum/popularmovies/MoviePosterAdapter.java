@@ -48,9 +48,6 @@ public class MoviePosterAdapter extends ArrayAdapter<MovieDetail>  {
         ImageView posterView = (ImageView) convertView.findViewById(R.id.poster_image);
         Picasso.with(getContext()).load(imgURL).into(posterView);
 
-        TextView titleView = (TextView) convertView.findViewById(R.id.poster_title);
-        titleView.setText(mMovieDetail.title);
-
         return convertView;
     }
 }
