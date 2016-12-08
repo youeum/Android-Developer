@@ -1,6 +1,7 @@
 package com.youngseum.popularmovies;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -8,29 +9,43 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class DetailActivity extends AppCompatActivity {
+    @BindView(R.id.tv_title)
+    TextView tv_title;
+
+    @BindView(R.id.tv_overview)
+    TextView tv_overview;
+
+    @BindView(R.id.tv_releaseDate)
+    TextView tv_releaseDate;
+
+    @BindView(R.id.tv_rating)
+    TextView tv_rating;
+
+    @BindView(R.id.iv_poster)
+    ImageView iv_poster;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
         Intent intent = getIntent();
         MovieDetail detail = intent.getParcelableExtra(Intent.EXTRA_INTENT);
 
-        TextView tv_title = (TextView) findViewById(R.id.tv_title);
+        ButterKnife.bind(this);
+
         tv_title.setText(detail.title);
-
-        TextView tv_overview = (TextView) findViewById(R.id.tv_overview);
         tv_overview.setText(detail.overview);
-
-        TextView tv_releaseDate = (TextView) findViewById(R.id.tv_releaseDate);
         tv_releaseDate.setText( formatDate(detail.release) );
-
-        TextView tv_rating = (TextView) findViewById(R.id.tv_rating);
         tv_rating.setText(detail.vote + " / 10.0");
 
-        ImageView iv_poster = (ImageView) findViewById(R.id.iv_poster);
         String imgURL = "http://image.tmdb.org/t/p/w185" + detail.poster;
         Picasso.with(this).load(imgURL).into(iv_poster);
 

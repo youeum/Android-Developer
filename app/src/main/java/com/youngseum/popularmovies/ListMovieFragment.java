@@ -19,6 +19,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -31,6 +34,12 @@ public class ListMovieFragment extends Fragment implements LoaderManager.LoaderC
     // Use this to keep onItemSelected from firing when the view is being created
     private int lastSpinnerPos;
     private String setting;
+
+    @BindView(R.id.movie_grid)
+    GridView gridView;
+
+    @BindView(R.id.sortBySpinner)
+    Spinner spinner;
 
     public ListMovieFragment() {
     }
@@ -70,9 +79,9 @@ public class ListMovieFragment extends Fragment implements LoaderManager.LoaderC
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        ButterKnife.bind(this, rootView);
 
         // Get a reference to the GridView, and attach this adapter to it.
-        GridView gridView = (GridView) rootView.findViewById(R.id.movie_grid);
         gridView.setAdapter(mMovieAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -85,7 +94,6 @@ public class ListMovieFragment extends Fragment implements LoaderManager.LoaderC
         });
 
         // Add a listener to the spinner and sort according to the setting chosen
-        Spinner spinner = (Spinner) rootView.findViewById(R.id.sortBySpinner);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

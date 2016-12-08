@@ -13,6 +13,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Young on 2016-11-18.
  */
@@ -33,6 +36,15 @@ public class MoviePosterAdapter extends ArrayAdapter<MovieDetail>  {
         Log.v(LOG_TAG, "Successfully constructed MoviePosterAdapter");
     }
 
+    public class ViewHolder {
+        @BindView(R.id.poster_image)
+        ImageView posterView;
+
+        ViewHolder (View v) {
+            ButterKnife.bind(this, v);
+        }
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         MovieDetail mMovieDetail = getItem(position);
@@ -42,10 +54,17 @@ public class MoviePosterAdapter extends ArrayAdapter<MovieDetail>  {
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.poster_item, parent, false);
+
+            // Use ViewHolder pattern to avoid excessive calls to findViewById
+            final ViewHolder holder = new ViewHolder(convertView);
+
+            convertView.setTag(holder);
         }
 
+        ViewHolder holder = (ViewHolder) convertView.getTag();
+        ImageView posterView = holder.posterView;
+
         // Get the reference of the image view and load the image using Picasso
-        ImageView posterView = (ImageView) convertView.findViewById(R.id.poster_image);
         Picasso.with(getContext()).load(imgURL).into(posterView);
 
         return convertView;
